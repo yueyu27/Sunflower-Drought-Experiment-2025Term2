@@ -7,6 +7,7 @@ getwd()
 setwd("/Users/yueyu/Desktop")
 
 # --load pkgs
+library(tidyverse)
 library(ggplot2)
 
 # -- Load Treatment B days to full wilt data
