@@ -1,6 +1,6 @@
 # Sunflower Drought Experiment 2025Term2
- This is preliminary code for testing sunflower drought tolerance with the following code and data
-
+ This is preliminary code for testing sunflower drought tolerance
+ 
 #### TXT files:
 - Treatment A and Control: TreamentAC_Biomass.txt
 - Treatment B: TreatmentB_2025March12.txt
