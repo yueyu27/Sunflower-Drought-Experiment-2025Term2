@@ -9,6 +9,7 @@ setwd("/Users/yueyu/Desktop/Drought_R")
 # --load pkgs
 library(ggplot2)
 library(tidyverse)
+library(ggpubr)
 
 # -- Load Treatment A/C biomass data
 biomass <- read.delim("TreamentAC_Biomass.txt",header = T, na.string = c("","NA"))
@@ -215,6 +216,64 @@ ggplot(C_RES_SUS_biomass_data, aes(x = Type, y = mean_biomass, fill = Type)) +
   annotate("text", x = 1.5, y = max(C_RES_SUS_biomass_data$mean_biomass, na.rm = TRUE) + 0.5, 
            label = paste("p =", p_value_3), size = 5, fontface = "bold")
 
+
+
+
+# ------------------------------------------------------------------------------------
+# --  Perform 4th t-test: Resistant VS Susceptible within Treatment A compared to C 
+# ------------------------------------------------------------------------------------
+
+# Load required libraries
+library(dplyr)
+library(ggplot2)
+library(ggpubr)
+
+# Step 1: Combine dataframes a and c
+combined <- bind_rows(a, c)
+
+# Step 2: Create a new group variable
+combined <- combined %>%
+  mutate(Group = paste(Treatment, Type, sep = "_"))
+
+# Step 3: Define the order of groups (optional but useful for consistent plots)
+combined$Group <- factor(combined$Group, levels = c("A_Susceptible", "A_Resistant", "C_Susceptible", "C_Resistant"))
+
+
+# Step 3.1: Define custom colors for each group
+group_colors <- c(
+  "A_Susceptible" = "#8093d7", # BLUE light
+  "A_Resistant" = "#e7b8b8",   # RED light
+  "C_Susceptible" = "#acacac", # Grey light
+  "C_Resistant" = "#7a7575"    # Grey slightly darker
+)
+
+
+# Step 4: Create the boxplot with statistical comparisons
+ggplot(combined, aes(x = Group, y = mean_biomass, fill = Group)) +
+  geom_boxplot() +
+  geom_jitter(width = 0.2, alpha = 0.6) +
+  stat_compare_means(
+    comparisons = list(
+      c("A_Susceptible", "A_Resistant"),
+      c("C_Susceptible", "C_Resistant"),
+      c("A_Susceptible", "C_Susceptible"),
+      c("A_Resistant", "C_Resistant")
+    ),
+    method = "t.test",
+    label = "p.signif", # show significance levels like *, **, *** 
+    size = 5,             # font size of the asterisks
+    color = "black",        # color of the label
+    fontface = "bold" 
+    ) +
+  scale_fill_manual(values = group_colors) +
+  ylim(c(1,6)) +
+  labs(x = " ",
+       y = " ") +
+  theme_classic() +
+  theme(
+    legend.position = "none",
+    axis.text.x = element_blank(),  # X axis labels
+    axis.text.y = element_text(size = 14))
 
 
 # END
